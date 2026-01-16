@@ -57,13 +57,13 @@
 
         <section id="profile" class="page">
             <div class="p-8 rounded-[30px] bg-zinc-900 border border-white/5 text-center relative overflow-hidden">
-                <h2 class="text-xl font-black mb-2 uppercase">The Black Vault</h2>
-                <div class="inline-block px-4 py-1 bg-cyan-500 text-black text-[10px] font-black rounded-full shadow-lg">Password: khmeas</div>
+                <h2 class="text-xl font-black mb-2 uppercase text-cyan-400 italic tracking-tighter">The Black Vault</h2>
+                <div class="inline-block px-5 py-2 bg-cyan-500 text-black text-[10px] font-black rounded-full shadow-lg">Password: khmeas</div>
             </div>
         </section>
     </main>
 
-    <nav class="fixed bottom-0 w-full h-20 bg-black/95 border-t border-white/5 flex justify-around items-center z-50 px-6">
+    <nav class="fixed bottom-0 w-full h-20 bg-black/95 border-t border-white/5 flex justify-around items-center z-50 px-6 backdrop-blur-md">
         <div onclick="showPage('home')" class="nav-item flex flex-col items-center text-cyan-400 cursor-pointer"><i class="fas fa-home text-lg"></i><span class="text-[9px] mt-1 font-bold">الرئيسية</span></div>
         <div onclick="showPage('search')" class="nav-item flex flex-col items-center text-gray-500 cursor-pointer"><i class="fas fa-search text-lg"></i><span class="text-[9px] mt-1 font-bold">استكشاف</span></div>
         <div onclick="showPage('profile')" class="nav-item flex flex-col items-center text-gray-500 cursor-pointer"><i class="fas fa-fingerprint text-lg"></i><span class="text-[9px] mt-1 font-bold">بلاك</span></div>
@@ -80,29 +80,25 @@
             setTimeout(() => n.style.top = '-120px', 4000);
         }
 
-        // تحسين الجلب ليعمل بقوة على GitHub
         async function loadHome() {
             const grid = document.getElementById('movies-grid');
-            grid.innerHTML = '<div class="col-span-full text-center py-10 opacity-50 text-xs">جاري المزامنة مع السيرفرات العالمية...</div>';
+            grid.innerHTML = '<div class="col-span-full text-center py-10 opacity-50 text-xs">جاري كسر حماية البيانات...</div>';
             
             try {
-                // استخدام Fetch مع إضافة معايير لضمان عدم الحظر
-                const res = await fetch(`https://api.themoviedb.org/3/tv/trending/week?api_key=${KEY}&language=ar-SA`, {
-                    mode: 'cors'
-                });
+                const res = await fetch(`https://api.themoviedb.org/3/tv/popular?api_key=${KEY}&language=ar-SA&page=1`);
                 const data = await res.json();
                 
-                if(!data.results || data.results.length === 0) throw new Error("No Results");
+                if(!data.results) throw new Error("API Error");
 
                 grid.innerHTML = data.results.map(m => `
                     <div class="movie-card shadow-lg" onclick="openShow(${m.id})">
-                        <img src="${IMG + m.poster_path}" loading="lazy" class="w-full h-60 object-cover">
+                        <img src="${m.poster_path ? IMG + m.poster_path : 'https://via.placeholder.com/500'}" loading="lazy" class="w-full h-60 object-cover">
                         <div class="p-3 bg-zinc-900/90"><h4 class="text-[10px] font-black truncate">${m.name}</h4></div>
                     </div>
                 `).join('');
-                sendNotify('تم استعادة الاتصال.. استمتع سيدي ✅');
+                sendNotify('تم استعادة السيطرة.. استمتع سيدي ✅');
             } catch (err) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-red-500 font-bold mb-2">خطأ في السيرفر العالمي</p><button onclick="loadHome()" class="bg-cyan-500 text-black px-4 py-2 rounded-full text-xs font-black">إعادة المحاولة</button></div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-red-500 font-bold mb-4">خطأ في السيرفر العالمي</p><button onclick="loadHome()" class="bg-cyan-500 text-black px-6 py-2 rounded-full text-[10px] font-black uppercase">إعادة المحاولة</button></div>`;
             }
         }
 
@@ -127,7 +123,7 @@
             
             const seasonsDiv = document.getElementById('seasons-control');
             seasonsDiv.innerHTML = m.seasons.filter(s => s.season_number > 0).map(s => `
-                <div class="bg-zinc-900 rounded-xl p-4 border border-white/5"><button onclick="loadEpisodes(${id}, ${s.season_number})" class="w-full text-right text-xs font-black uppercase">${s.name}</button><div id="eps-${s.season_number}" class="hidden grid grid-cols-5 gap-2 mt-4"></div></div>
+                <div class="bg-zinc-900 rounded-xl p-4 border border-white/5"><button onclick="loadEpisodes(${id}, ${s.season_number})" class="w-full text-right text-xs font-black uppercase text-gray-300 hover:text-cyan-400 transition-colors">${s.name}</button><div id="eps-${s.season_number}" class="hidden grid grid-cols-5 gap-2 mt-4"></div></div>
             `).join('');
             playVideo(id, 1, 1);
         }
