@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Cinema 2099 | BLACK EDITION</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        :root { --main: #00f3ff; --bg: #050505; --dark-card: #0f0f0f; }
+        body { background: var(--bg); color: white; font-family: 'Cairo', sans-serif; margin-bottom: 100px; overflow-x: hidden; }
+        
+        .page { display: none; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .movie-card { border-radius: 20px; overflow: hidden; background: var(--dark-card); transition: 0.4s; cursor: pointer; border: 1px solid rgba(255,255,255,0.03); position: relative; }
+        .movie-card:hover { transform: scale(1.05); border-color: var(--main); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 24px; background: #000; border: 1px solid rgba(0, 243, 255, 0.1); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        .ep-btn { background: #151515; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .ep-btn:hover { background: var(--main); color: #000; font-weight: bold; }
+        .search-input { background: #111; border: 1px solid #222; transition: 0.3s; }
+        .search-input:focus { border-color: var(--main); }
+
+        /* ستايل الإشعار */
+        #black-notify {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: #0f0f0f; border: 1px solid var(--main);
+            padding: 15px; rounded-2xl: 20px; z-index: 9999; transition: 0.5s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="black-notify">
+        <div class="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center text-black shadow-lg shadow-cyan-500/50">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="flex-1">
+            <h5 class="text-[11px] font-black text-cyan-400 uppercase">نظام بلاك الذكي</h5>
+            <p id="notify-msg" class="text-[10px] text-gray-300 font-bold leading-tight"></p>
+        </div>
+        <button onclick="closeNotify()" class="text-gray-500"><i class="fas fa-times"></i></button>
+    </div>
+
+    <header class="p-5 flex justify-between items-center sticky top-0 bg-black/90 z-50 border-b border-white/5 backdrop-blur-md">
+        <div class="flex items-center gap-3" onclick="showPage('home')">
+            <div class="w-11 h-11 bg-cyan-500 rounded-2xl flex items-center justify-center text-black shadow-lg shadow-cyan-500/30 rotate-3">
+                <i class="fas fa-bolt text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-black leading-none">GLOBAL<span class="text-cyan-400">2099</span></h1>
+                <p class="text-[8px] tracking-[3px] text-gray-500 font-bold uppercase">Black Edition</p>
+            </div>
+        </div>
+        <div class="flex gap-4 items-center">
+            <i class="fas fa-search text-gray-400 text-lg" onclick="showPage('search')"></i>
+            <div class="w-9 h-9 rounded-full bg-zinc-900 border border-cyan-500/30 flex items-center justify-center">
+                <i class="fas fa-user-ninja text-sm text-cyan-400"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="p-4 pt-2">
+        <section id="home" class="page active">
+            <div id="movies-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5"></div>
+        </section>
+
+        <section id="search" class="page">
+            <input type="text" id="query" oninput="searchRealTime()" placeholder="ابحث عالمياً..." class="w-full search-input p-4 rounded-2xl outline-none text-sm text-white mb-6">
+            <div id="search-results" class="grid grid-cols-2 gap-4"></div>
+        </section>
+
+        <section id="watch" class="page">
+            <div class="video-container mb-6"><iframe id="main-player" src="" allowfullscreen></iframe></div>
+            <div id="movie-meta" class="px-1"></div>
+            <div id="seasons-control" class="mt-8 space-y-3"></div>
+        </section>
+
+        <section id="profile" class="page">
+            <div class="p-8 rounded-[35px] bg-gradient-to-br from-zinc-900 to-black border border-white/5 text-center shadow-2xl mb-6">
+                <h2 class="text-2xl font-black italic">خزنة بلاك</h2>
+                <div class="mt-4 inline-block px-4 py-1 bg-cyan-500 text-black text-[10px] font-black rounded-full uppercase">Pass: khmeas</div>
+            </div>
+        </section>
+    </main>
+
+    <nav class="fixed bottom-0 w-full h-20 bg-black/95 border-t border-white/5 flex justify-around items-center z-50 px-6 backdrop-blur-2xl">
+        <div onclick="showPage('home')" class="nav-item flex flex-col items-center text-cyan-400"><i class="fas fa-home text-xl"></i><span class="text-[9px] mt-1 font-bold">الرئيسية</span></div>
+        <div onclick="showPage('search')" class="nav-item flex flex-col items-center text-gray-500"><i class="fas fa-search text-xl"></i><span class="text-[9px] mt-1 font-bold">بحث</span></div>
+        <div onclick="showPage('profile')" class="nav-item flex flex-col items-center text-gray-500"><i class="fas fa-fingerprint text-xl"></i><span class="text-[9px] mt-1 font-bold">بلاك</span></div>
+    </nav>
+
+    <script>
+        const KEY = '8e860953a99e8213601275988574d750';
+        const IMG = 'https://image.tmdb.org/t/p/w500';
+
+        // دالة الإشعارات
+        function sendNotify(msg, delay = 2000) {
+            setTimeout(() => {
+                document.getElementById('notify-msg').innerText = msg;
+                document.getElementById('black-notify').style.top = '20px';
+                setTimeout(closeNotify, 6000);
+            }, delay);
+        }
+        function closeNotify() { document.getElementById('black-notify').style.top = '-100px'; }
+
+        async function loadHome() {
+            const res = await fetch(`https://api.themoviedb.org/3/tv/trending/week?api_key=${KEY}&language=ar-SA`);
+            const data = await res.json();
+            document.getElementById('movies-grid').innerHTML = data.results.map(m => `
+                <div class="movie-card shadow-2xl" onclick="openShow(${m.id})">
+                    <img src="${IMG + m.poster_path}" class="w-full h-64 object-cover">
+                    <div class="p-3"><h4 class="text-[11px] font-black truncate">${m.name}</h4></div>
+                </div>
+            `).join('');
+            sendNotify('تم تحديث قائمة المسلسلات العالمية بنجاح ✅');
+        }
+
+        async function searchRealTime() {
+            const q = document.getElementById('query').value;
+            if(q.length < 2) return;
+            const res = await fetch(`https://api.themoviedb.org/3/search/tv?api_key=${KEY}&language=ar-SA&query=${q}`);
+            const data = await res.json();
+            document.getElementById('search-results').innerHTML = data.results.map(m => `
+                <div class="movie-card" onclick="openShow(${m.id})">
+                    <img src="${m.poster_path ? IMG+m.poster_path : 'https://via.placeholder.com/500'}" class="w-full h-48 object-cover">
+                    <div class="p-2 text-[10px] font-bold truncate">${m.name}</div>
+                </div>
+            `).join('');
+        }
+
+        async function openShow(id) {
+            showPage('watch');
+            const res = await fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${KEY}&language=ar-SA`);
+            const m = await res.json();
+            document.getElementById('movie-meta').innerHTML = `<h2 class="text-xl font-black mb-2">${m.name}</h2><p class="text-xs text-gray-500">${m.overview}</p>`;
+            
+            const seasonsDiv = document.getElementById('seasons-control');
+            seasonsDiv.innerHTML = m.seasons.filter(s => s.season_number > 0).map(s => `
+                <div class="bg-zinc-900/50 p-4 rounded-2xl border border-white/5">
+                    <button onclick="loadEpisodes(${id}, ${s.season_number})" class="w-full text-right text-xs font-black uppercase">${s.name}</button>
+                    <div id="eps-${s.season_number}" class="hidden flex gap-2 overflow-x-auto mt-4 p-2"></div>
+                </div>
+            `).join('');
+            playVideo(id, 1, 1);
+        }
+
+        async function loadEpisodes(id, s) {
+            const div = document.getElementById(`eps-${s}`);
+            if(!div.classList.contains('hidden')) return div.classList.add('hidden');
+            const res = await fetch(`https://api.themoviedb.org/3/tv/${id}/season/${s}?api_key=${KEY}&language=ar-SA`);
+            const data = await res.json();
+            div.innerHTML = data.episodes.map(e => `<button onclick="playVideo(${id}, ${s}, ${e.episode_number})" class="ep-btn min-w-[50px] h-10 rounded-lg text-xs font-bold">${e.episode_number}</button>`).join('');
+            div.classList.remove('hidden');
+        }
+
+        function playVideo(id, s, e) {
+            document.getElementById('main-player').src = `https://vidsrc.me/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
+            window.scrollTo(0,0);
+        }
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        loadHome();
+    </script>
+</body>
+</html>
+
