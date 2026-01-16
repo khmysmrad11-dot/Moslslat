@@ -8,103 +8,90 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        body { background: #050505; color: white; font-family: 'Cairo', sans-serif; overflow-x: hidden; }
-        .movie-card { border-radius: 20px; overflow: hidden; background: #0f0f0f; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
-        .movie-card:hover { border-color: #00f3ff; transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
-        .loading-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        body { background: #050505; color: white; font-family: 'Cairo', sans-serif; }
+        .movie-card { border-radius: 15px; overflow: hidden; background: #0f0f0f; border: 1px solid #1a1a1a; transition: 0.3s; }
+        .movie-card:hover { border-color: #00f3ff; }
+        .error-box { background: rgba(255,0,0,0.1); border: 1px dashed red; padding: 20px; border-radius: 20px; margin-top: 50px; }
     </style>
 </head>
 <body class="pb-24">
 
-    <header class="p-6 flex justify-between items-center sticky top-0 bg-black/90 backdrop-blur-md z-50 border-b border-white/5">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-cyan-500 rounded-2xl flex items-center justify-center text-black shadow-lg shadow-cyan-500/40"><i class="fas fa-bolt text-xl"></i></div>
-            <div>
-                <h1 class="text-xl font-black italic tracking-tighter">GLOBAL<span class="text-cyan-400">2099</span></h1>
-                <p class="text-[8px] tracking-[3px] text-gray-500 font-bold uppercase">System Online</p>
-            </div>
+    <header class="p-5 flex justify-between items-center bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-black shadow-lg shadow-cyan-500/20"><i class="fas fa-bolt"></i></div>
+            <h1 class="text-lg font-black italic uppercase">Global<span class="text-cyan-400">2099</span></h1>
         </div>
-        <div class="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-cyan-500/20"><i class="fas fa-fingerprint text-cyan-400"></i></div>
+        <div class="text-[10px] bg-red-600 px-2 py-1 rounded font-bold animate-pulse uppercase">Protocol Alpha</div>
     </header>
 
     <main class="p-4">
-        <div class="mb-8 pr-3 border-r-4 border-cyan-500">
-            <h2 class="text-2xl font-black italic">المقترحة لك</h2>
-            <p class="text-xs text-gray-500 font-bold">بواسطة سيرفر بلاك العالمي</p>
-        </div>
-
-        <div id="grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <div id="grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             <div class="col-span-full text-center py-20">
-                <div class="loading-pulse mb-4"><i class="fas fa-circle-notch fa-spin text-4xl text-cyan-500"></i></div>
-                <p class="text-gray-400 font-bold italic">جاري اختراق قيود السيرفر...</p>
+                <i class="fas fa-satellite-dish fa-spin text-4xl text-cyan-500 mb-4"></i>
+                <p class="font-bold italic">بلاك يحاول اختراق جدار الحماية...</p>
             </div>
         </div>
     </main>
 
-    <nav class="fixed bottom-0 w-full h-20 bg-black/95 border-t border-white/5 flex justify-around items-center z-50 px-6 backdrop-blur-xl">
-        <div class="flex flex-col items-center text-cyan-400"><i class="fas fa-home text-2xl"></i><span class="text-[10px] mt-1 font-black">الرئيسية</span></div>
-        <div class="flex flex-col items-center text-gray-600"><i class="fas fa-search text-2xl"></i><span class="text-[10px] mt-1 font-black">استكشاف</span></div>
-        <div onclick="alert('Password: khmeas')" class="flex flex-col items-center text-gray-600"><i class="fas fa-shield-alt text-2xl"></i><span class="text-[10px] mt-1 font-black">الأمان</span></div>
+    <nav class="fixed bottom-0 w-full bg-black/90 border-t border-white/5 h-20 flex justify-around items-center backdrop-blur-xl z-50">
+        <div class="text-cyan-400 flex flex-col items-center"><i class="fas fa-home text-xl"></i><span class="text-[10px] font-bold mt-1">الرئيسية</span></div>
+        <div onclick="alert('PASS: khmeas')" class="text-gray-500 flex flex-col items-center"><i class="fas fa-lock text-xl"></i><span class="text-[10px] font-bold mt-1">بلاك</span></div>
     </nav>
 
     <script>
-        // مفتاحك الاحتياطي
         const KEY = '8e860953a99e8213601275988574d750';
         const IMG = 'https://image.tmdb.org/t/p/w500';
 
-        async function initBlackSystem() {
-            const grid = document.getElementById('grid');
-            
-            // قائمة من 3 بروكسيات عالمية.. إذا فشل واحد يعمل الآخر تلقائياً
-            const proxies = [
-                'https://api.allorigins.win/get?url=',
-                'https://corsproxy.io/?',
-                'https://api.codetabs.com/v1/proxy?url='
+        async function tryFetch() {
+            const api = `https://api.themoviedb.org/3/tv/popular?api_key=${KEY}&language=ar-SA`;
+            // قائمة البروكسيات المنقذة
+            const urls = [
+                api, // محاولة مباشرة
+                `https://api.allorigins.win/get?url=${encodeURIComponent(api)}`,
+                `https://corsproxy.io/?${encodeURIComponent(api)}`,
+                `https://api.codetabs.com/v1/proxy?url=${encodeURIComponent(api)}`
             ];
 
-            const api_url = `https://api.themoviedb.org/3/tv/popular?api_key=${KEY}&language=ar-SA`;
-
-            try {
-                // المحاولة باستخدام أفضل بروكسي متاح
-                const response = await fetch(proxies[1] + encodeURIComponent(api_url));
-                
-                if (!response.ok) throw new Error('Proxy 1 failed');
-                
-                const data = await response.json();
-                
-                // تنظيف الشبكة وعرض البيانات
-                grid.innerHTML = '';
-                
-                data.results.forEach(m => {
-                    const card = `
-                        <div class="movie-card shadow-xl shadow-black">
-                            <img src="${IMG + m.poster_path}" class="w-full h-64 object-cover">
-                            <div class="p-4">
-                                <h4 class="text-[11px] font-black truncate text-cyan-50 text-right">${m.name}</h4>
-                                <div class="flex justify-between items-center mt-2">
-                                    <span class="text-[9px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded border border-cyan-500/20 font-black">TV SHOW</span>
-                                    <span class="text-[9px] text-gray-500 font-bold"><i class="fas fa-star text-yellow-500 ml-1"></i>${m.vote_average}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    grid.innerHTML += card;
-                });
-
-            } catch (err) {
-                console.error(err);
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-20">
-                        <i class="fas fa-exclamation-triangle text-red-500 text-5xl mb-4"></i>
-                        <p class="text-red-500 font-black italic">بلاك: السيرفر لا يزال محظوراً في منطقتك!</p>
-                        <button onclick="location.reload()" class="mt-6 bg-cyan-500 text-black px-8 py-3 rounded-2xl font-black text-sm uppercase">محاولة اختراق جديدة</button>
-                    </div>
-                `;
+            for (let url of urls) {
+                try {
+                    console.log("Trying:", url);
+                    const res = await fetch(url);
+                    let data = await res.json();
+                    
+                    // إذا كان من AllOrigins نحتاج لفك التغليف
+                    if (data.contents) data = JSON.parse(data.contents);
+                    
+                    if (data.results) {
+                        render(data.results);
+                        return; // نجحنا! توقف هنا.
+                    }
+                } catch (e) { console.log("Failed attempt on:", url); }
             }
+            
+            showError();
         }
 
-        window.onload = initBlackSystem;
+        function render(movies) {
+            document.getElementById('grid').innerHTML = movies.map(m => `
+                <div class="movie-card shadow-lg">
+                    <img src="${IMG + m.poster_path}" class="w-full h-60 object-cover" onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
+                    <div class="p-3"><h4 class="text-[10px] font-black truncate">${m.name}</h4></div>
+                </div>
+            `).join('');
+        }
+
+        function showError() {
+            document.getElementById('grid').innerHTML = `
+                <div class="col-span-full text-center error-box">
+                    <i class="fas fa-user-secret text-4xl mb-4"></i>
+                    <h2 class="text-xl font-black text-red-500">تم كشف المحاولة!</h2>
+                    <p class="text-sm mt-2 text-gray-400">يا قائد، السيرفر العالمي يحظرك حالياً. <br> شغل <b>VPN</b> لثواني ثم أعد التحميل، أو استسلم للغضب.</p>
+                    <button onclick="location.reload()" class="mt-4 bg-white text-black px-6 py-2 rounded-full font-black">إعادة محاولة أخيرة</button>
+                </div>
+            `;
+        }
+
+        window.onload = tryFetch;
     </script>
 </body>
 </html>
