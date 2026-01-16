@@ -3,95 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Cinema 2099 | BLACK EDITION</title>
+    <title>BLACK STORE | المتجر العالمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        body { background: #050505; color: white; font-family: 'Cairo', sans-serif; }
-        .movie-card { border-radius: 15px; overflow: hidden; background: #0f0f0f; border: 1px solid #1a1a1a; transition: 0.3s; }
-        .movie-card:hover { border-color: #00f3ff; }
-        .error-box { background: rgba(255,0,0,0.1); border: 1px dashed red; padding: 20px; border-radius: 20px; margin-top: 50px; }
+        :root { --main: #00f3ff; --dark: #050505; --card: #0f0f0f; }
+        .theme-soft { --main: #a855f7; --dark: #121212; --card: #1e1e1e; }
+        
+        body { background: var(--dark); color: white; font-family: 'Cairo', sans-serif; overflow-x: hidden; scroll-behavior: smooth; transition: 0.3s; }
+        .page { display: none; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .glass { background: rgba(15, 15, 15, 0.8); backdrop-blur: 15px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .video-box { width: 100%; height: 220px; background: #000; border-radius: 25px; overflow: hidden; position: relative; }
+        .btn-buy { background: linear-gradient(90deg, var(--main), #0077ff); color: #000; font-weight: 900; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-28">
 
-    <header class="p-5 flex justify-between items-center bg-black/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-black shadow-lg shadow-cyan-500/20"><i class="fas fa-bolt"></i></div>
-            <h1 class="text-lg font-black italic uppercase">Global<span class="text-cyan-400">2099</span></h1>
-        </div>
-        <div class="text-[10px] bg-red-600 px-2 py-1 rounded font-bold animate-pulse uppercase">Protocol Alpha</div>
-    </header>
+    <div id="notify" class="fixed top-10 left-1/2 -translate-x-1/2 z-[9999] glass p-4 rounded-2xl hidden border-cyan-500/50 min-w-[280px] text-center">
+        <p id="notify-msg" class="text-xs font-black text-cyan-400"></p>
+    </div>
 
-    <main class="p-4">
-        <div id="grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <div class="col-span-full text-center py-20">
-                <i class="fas fa-satellite-dish fa-spin text-4xl text-cyan-500 mb-4"></i>
-                <p class="font-bold italic">بلاك يحاول اختراق جدار الحماية...</p>
+    <div id="dev-modal" class="modal">
+        <div class="glass p-8 rounded-[40px] text-center border-cyan-500/30 max-w-sm w-full relative">
+            <button onclick="closeModal()" class="absolute top-4 left-4 text-gray-500"><i class="fas fa-times text-xl"></i></button>
+            <div class="w-20 h-20 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyan-500">
+                <i class="fas fa-user-tie text-3xl text-cyan-400"></i>
+            </div>
+            <h2 class="text-xl font-black mb-1">Khamees Murad Jarwan</h2>
+            <p class="text-[10px] text-gray-500 font-bold mb-6 tracking-widest uppercase">Lead Developer</p>
+            <div class="flex justify-center gap-4">
+                <a href="https://wa.me/967784070972" class="w-10 h-10 glass rounded-xl flex items-center justify-center text-green-500"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="w-10 h-10 glass rounded-xl flex items-center justify-center text-pink-500"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
+    </div>
+
+    <header class="p-4 sticky top-0 z-[100] glass border-b border-white/5 flex justify-between items-center">
+        <div class="flex items-center gap-2" onclick="showPage('home')">
+            <div class="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center text-black shadow-lg"><i class="fas fa-bolt"></i></div>
+            <h1 class="text-lg font-black italic">BLACK<span class="text-cyan-400">STORE</span></h1>
+        </div>
+        <div class="flex gap-2">
+            <select id="currency-select" onchange="updateCurrency()" class="bg-zinc-900 border border-white/10 rounded-lg text-[10px] px-2 py-1 font-bold outline-none">
+                <option value="USD">USD ($)</option>
+                <option value="YER_S">YER (صنعاء)</option>
+                <option value="YER_A">YER (عدن)</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="p-4" id="main-content">
+        
+        <section id="home" class="page active">
+            <div class="mb-6 relative h-48 rounded-[30px] overflow-hidden border border-red-500/20">
+                <div class="absolute top-4 right-4 z-10 bg-red-600 px-3 py-1 rounded-full text-[10px] font-black animate-pulse lang-txt" data-ar="عرض محدود" data-en="Flash Sale">عرض محدود</div>
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover opacity-50">
+                <div class="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black to-transparent">
+                    <p class="text-[10px] text-gray-400 font-bold mb-1 lang-txt" data-ar="احصل على أقوى العروض الآن:" data-en="Get the best deals now:">احصل على أقوى العروض الآن:</p>
+                    <div id="timer" class="text-2xl font-black tracking-widest text-white">02:59:59</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 mb-8 text-center">
+                <div onclick="showPage('pubg')" class="flex flex-col items-center"><div class="w-12 h-12 glass rounded-2xl flex items-center justify-center mb-1 text-cyan-400"><i class="fas fa-crosshairs"></i></div><span class="text-[8px] font-black lang-txt" data-ar="ببجي" data-en="PUBG">ببجي</span></div>
+                <div onclick="showPage('freefire')" class="flex flex-col items-center"><div class="w-12 h-12 glass rounded-2xl flex items-center justify-center mb-1 text-orange-400"><i class="fas fa-fire"></i></div><span class="text-[8px] font-black lang-txt" data-ar="فري فاير" data-en="Free Fire">فري فاير</span></div>
+                <div onclick="showPage('accounts')" class="flex flex-col items-center"><div class="w-12 h-12 glass rounded-2xl flex items-center justify-center mb-1 text-purple-400"><i class="fas fa-user-shield"></i></div><span class="text-[8px] font-black lang-txt" data-ar="حسابات" data-en="Accounts">حسابات</span></div>
+                <div onclick="showPage('settings')" class="flex flex-col items-center"><div class="w-12 h-12 glass rounded-2xl flex items-center justify-center mb-1 text-gray-400"><i class="fas fa-cog"></i></div><span class="text-[8px] font-black lang-txt" data-ar="إعدادات" data-en="Settings">إعدادات</span></div>
+            </div>
+
+            <h3 class="text-sm font-black mb-4 lang-txt" data-ar="عروض مختارة لك" data-en="Featured For You">عروض مختارة لك</h3>
+            <div id="featured-products" class="space-y-4"></div>
+        </section>
+
+        <section id="settings" class="page">
+            <h2 class="text-xl font-black mb-6 border-r-4 border-cyan-500 pr-3 lang-txt" data-ar="مركز التحكم" data-en="Control Center">مركز التحكم</h2>
+            <div class="space-y-4">
+                <div class="glass p-5 rounded-[25px] flex items-center justify-between">
+                    <div><p class="text-xs font-black lang-txt" data-ar="ثيم التطبيق" data-en="App Theme">ثيم التطبيق</p><p class="text-[9px] text-gray-500 lang-txt" data-ar="اختر مظهرك المفضل" data-en="Pick your style">اختر مظهرك المفضل</p></div>
+                    <button onclick="toggleTheme()" id="theme-btn" class="w-12 h-6 bg-zinc-800 rounded-full relative p-1"><div class="w-4 h-4 bg-cyan-400 rounded-full transition-all"></div></button>
+                </div>
+                <div class="glass p-5 rounded-[25px] flex items-center justify-between">
+                    <div><p class="text-xs font-black lang-txt" data-ar="اللغة" data-en="Language">اللغة</p><p class="text-[9px] text-gray-500 lang-txt" data-ar="العربية / English" data-en="Arabic / English">العربية / English</p></div>
+                    <button onclick="toggleLang()" class="px-4 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-lg text-[9px] font-bold text-cyan-400 uppercase" id="lang-btn">EN</button>
+                </div>
+                <div onclick="openModal()" class="glass p-5 rounded-[25px] flex items-center justify-between">
+                    <div><p class="text-xs font-black lang-txt" data-ar="معلومات المطور" data-en="Developer Info">معلومات المطور</p><p class="text-[9px] text-gray-500 lang-txt" data-ar="تواصل مع المبرمج" data-en="Contact Dev">تواصل مع المبرمج</p></div>
+                    <i class="fas fa-chevron-left text-xs opacity-30"></i>
+                </div>
+                <div class="p-5 text-center opacity-20"><p class="text-[9px] font-bold">V 5.0.0 | BLACK EMPIRE</p></div>
+            </div>
+        </section>
+
+        <section id="cart" class="page">
+            <h2 class="text-xl font-black mb-6 border-r-4 border-cyan-500 pr-3 lang-txt" data-ar="حقيبة التسوق" data-en="Shopping Bag">حقيبة التسوق</h2>
+            <div id="cart-items" class="space-y-4 mb-8"></div>
+            <div id="cart-total-box" class="hidden glass p-6 rounded-[30px] border-t-2 border-cyan-500">
+                <div class="flex justify-between mb-4"><span class="font-black lang-txt" data-ar="الإجمالي:" data-en="Total:">الإجمالي:</span><span id="total-price" class="text-xl font-black text-cyan-400">$0</span></div>
+                <button onclick="checkoutWhatsApp()" class="w-full py-4 btn-buy rounded-2xl text-xs uppercase shadow-lg shadow-cyan-500/20 lang-txt" data-ar="تأكيد الطلب عبر واتساب" data-en="Confirm via WhatsApp">تأكيد الطلب عبر واتساب</button>
+            </div>
+        </section>
+
     </main>
 
-    <nav class="fixed bottom-0 w-full bg-black/90 border-t border-white/5 h-20 flex justify-around items-center backdrop-blur-xl z-50">
-        <div class="text-cyan-400 flex flex-col items-center"><i class="fas fa-home text-xl"></i><span class="text-[10px] font-bold mt-1">الرئيسية</span></div>
-        <div onclick="alert('PASS: khmeas')" class="text-gray-500 flex flex-col items-center"><i class="fas fa-lock text-xl"></i><span class="text-[10px] font-bold mt-1">بلاك</span></div>
+    <nav class="fixed bottom-0 w-full h-20 glass border-t border-white/5 flex justify-around items-center z-[100] px-4 rounded-t-[35px]">
+        <div onclick="showPage('home')" class="nav-item text-cyan-400 flex flex-col items-center"><i class="fas fa-home-alt text-lg"></i><span class="text-[8px] font-black mt-1 uppercase lang-txt" data-ar="الرئيسية" data-en="Home">الرئيسية</span></div>
+        <div onclick="showPage('pubg')" class="nav-item text-gray-500 flex flex-col items-center"><i class="fas fa-gamepad text-lg"></i><span class="text-[8px] font-black mt-1 uppercase lang-txt" data-ar="الألعاب" data-en="Games">الألعاب</span></div>
+        <div onclick="showPage('cart')" class="nav-item text-gray-500 flex flex-col items-center relative"><i class="fas fa-shopping-basket text-lg"></i><span id="cart-badge" class="absolute -top-1 -right-1 bg-red-600 w-3 h-3 rounded-full text-[6px] flex items-center justify-center text-white">0</span><span class="text-[8px] font-black mt-1 uppercase lang-txt" data-ar="السلة" data-en="Cart">السلة</span></div>
+        <div onclick="showPage('settings')" class="nav-item text-gray-500 flex flex-col items-center"><i class="fas fa-sliders-h text-lg"></i><span class="text-[8px] font-black mt-1 uppercase lang-txt" data-ar="إعدادات" data-en="Settings">إعدادات</span></div>
     </nav>
 
     <script>
-        const KEY = '8e860953a99e8213601275988574d750';
-        const IMG = 'https://image.tmdb.org/t/p/w500';
+        const MY_PHONE = "967784070972";
+        let cart = [];
+        let currentCurrency = 'USD';
+        let currentLang = 'ar';
+        const rates = { USD: 1, YER_S: 535, YER_A: 1650 };
 
-        async function tryFetch() {
-            const api = `https://api.themoviedb.org/3/tv/popular?api_key=${KEY}&language=ar-SA`;
-            // قائمة البروكسيات المنقذة
-            const urls = [
-                api, // محاولة مباشرة
-                `https://api.allorigins.win/get?url=${encodeURIComponent(api)}`,
-                `https://corsproxy.io/?${encodeURIComponent(api)}`,
-                `https://api.codetabs.com/v1/proxy?url=${encodeURIComponent(api)}`
-            ];
+        const productsDB = [
+            { id: 1, name: "حساب ببجي ليفل 82 - ماكس", nameEn: "PUBG Level 82 - Max", cat: "pubg", price: 150, desc: "ام فور ثلجي ليفل 7 + بدلة الفرعون كيل مسج", descEn: "Glacier M4 Lvl 7 + Pharaoh Set Kill Msg", video: "https://v1.padel.live/static/videos/pubg_acc.mp4", trust: true },
+            { id: 2, name: "حساب مثك فاشن كامل", nameEn: "Mythic Fashion Account", cat: "accounts", price: 300, desc: "أكثر من 50 بدلة مثك وسكنات سيارات نادرة", descEn: "50+ Mythic Outfits & Rare Car Skins", video: "https://www.w3schools.com/html/mov_bbb.mp4", trust: true },
+            { id: 3, name: "660 شدة ببجي - شحن فوري", nameEn: "660 UC PUBG - Instant", cat: "pubg", price: 10, desc: "شحن رسمي عبر الآيدي خلال دقيقتين", descEn: "Official ID Top-up within 2 mins", video: "", trust: false },
+            { id: 4, name: "حساب فري فاير كريمنال", nameEn: "Free Fire Criminal Acc", cat: "freefire", price: 90, desc: "الكرمنال الأحمر والأزرق + رقصات نادرة", descEn: "Red & Blue Criminal + Rare Emotes", video: "", trust: true }
+        ];
 
-            for (let url of urls) {
-                try {
-                    console.log("Trying:", url);
-                    const res = await fetch(url);
-                    let data = await res.json();
-                    
-                    // إذا كان من AllOrigins نحتاج لفك التغليف
-                    if (data.contents) data = JSON.parse(data.contents);
-                    
-                    if (data.results) {
-                        render(data.results);
-                        return; // نجحنا! توقف هنا.
-                    }
-                } catch (e) { console.log("Failed attempt on:", url); }
-            }
+        function buildSystem() {
+            const main = document.getElementById('main-content');
+            ["pubg", "freefire", "accounts"].forEach(cat => {
+                let section = document.createElement('section');
+                section.id = cat; section.className = 'page';
+                section.innerHTML = `<h2 class="text-xl font-black mb-6 italic uppercase text-cyan-400">${cat} Hub</h2><div class="grid grid-cols-1 gap-6">${renderProducts(cat)}</div>`;
+                main.appendChild(section);
+            });
+        }
+
+        function renderProducts(cat) {
+            return productsDB.filter(p => p.cat === cat || cat === 'featured').map(p => {
+                const convertedPrice = (p.price * rates[currentCurrency]).toLocaleString();
+                const symbol = currentCurrency === 'USD' ? '$' : '﷼';
+                const name = currentLang === 'ar' ? p.name : p.nameEn;
+                const desc = currentLang === 'ar' ? p.desc : p.descEn;
+                const buyTxt = currentLang === 'ar' ? 'إضافة للحقيبة' : 'Add to Bag';
+
+                return `
+                <div class="glass rounded-[35px] overflow-hidden border border-white/5 mb-4 relative">
+                    <div class="video-box">
+                        ${p.video ? `<video src="${p.video}" autoplay muted loop class="w-full h-full object-cover"></video>` : `<img src="https://source.unsplash.com/random/500x300?gaming,${p.id}" class="w-full h-full object-cover opacity-30">`}
+                        ${p.trust ? `<div class="absolute top-4 right-4 badge-trust bg-yellow-500 text-black px-3 py-1 rounded-full text-[8px] font-black"><i class="fas fa-check-circle mr-1"></i> موثوق</div>` : ''}
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-black text-sm">${name}</h3>
+                            <span class="text-cyan-400 font-black text-lg">${convertedPrice}${symbol}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-500 font-bold mb-4 italic">${desc}</p>
+                        <button onclick="addToCart(${p.id})" class="w-full py-4 btn-buy rounded-2xl text-[10px] uppercase italic transition-all active:scale-95">${buyTxt}</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('theme-soft');
+            const isSoft = document.body.classList.contains('theme-soft');
+            document.querySelector('#theme-btn div').style.transform = isSoft ? 'translateX(-24px)' : 'translateX(0)';
+            sendNotify(isSoft ? "تم تفعيل الثيم الناعم" : "تم تفعيل ثيم السايبر");
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('lang-btn').innerText = currentLang === 'ar' ? 'EN' : 'AR';
             
-            showError();
+            document.querySelectorAll('.lang-txt').forEach(el => {
+                el.innerText = el.getAttribute(`data-${currentLang}`);
+            });
+
+            document.getElementById('featured-products').innerHTML = renderProducts('featured');
+            buildSystem(); 
+            sendNotify(currentLang === 'ar' ? "تم تغيير اللغة للعربية" : "Language changed to English");
         }
 
-        function render(movies) {
-            document.getElementById('grid').innerHTML = movies.map(m => `
-                <div class="movie-card shadow-lg">
-                    <img src="${IMG + m.poster_path}" class="w-full h-60 object-cover" onerror="this.src='https://via.placeholder.com/500x750?text=No+Image'">
-                    <div class="p-3"><h4 class="text-[10px] font-black truncate">${m.name}</h4></div>
-                </div>
-            `).join('');
+        function openModal() { document.getElementById('dev-modal').classList.add('active'); }
+        function closeModal() { document.getElementById('dev-modal').classList.remove('active'); }
+
+        function updateCurrency() {
+            currentCurrency = document.getElementById('currency-select').value;
+            document.getElementById('featured-products').innerHTML = renderProducts('featured');
+            updateCartUI();
         }
 
-        function showError() {
-            document.getElementById('grid').innerHTML = `
-                <div class="col-span-full text-center error-box">
-                    <i class="fas fa-user-secret text-4xl mb-4"></i>
-                    <h2 class="text-xl font-black text-red-500">تم كشف المحاولة!</h2>
-                    <p class="text-sm mt-2 text-gray-400">يا قائد، السيرفر العالمي يحظرك حالياً. <br> شغل <b>VPN</b> لثواني ثم أعد التحميل، أو استسلم للغضب.</p>
-                    <button onclick="location.reload()" class="mt-4 bg-white text-black px-6 py-2 rounded-full font-black">إعادة محاولة أخيرة</button>
-                </div>
-            `;
+        function addToCart(id) {
+            cart.push(productsDB.find(p => p.id === id));
+            updateCartUI();
+            sendNotify("تم الحفظ في الحقيبة ✅");
         }
 
-        window.onload = tryFetch;
+        function updateCartUI() {
+            document.getElementById('cart-badge').innerText = cart.length;
+            const container = document.getElementById('cart-items');
+            if(cart.length === 0) {
+                container.innerHTML = '<div class="text-center py-20 opacity-20 italic">BAG IS EMPTY</div>';
+                document.getElementById('cart-total-box').classList.add('hidden');
+                return;
+            }
+            document.getElementById('cart-total-box').classList.remove('hidden');
+            let totalUSD = 0;
+            container.innerHTML = cart.map((item, i) => {
+                totalUSD += item.price;
+                return `<div class="glass p-4 rounded-2xl flex justify-between items-center">
+                    <div><h4 class="font-black text-xs">${currentLang === 'ar' ? item.name : item.nameEn}</h4><span class="text-cyan-400 font-black">$${item.price}</span></div>
+                    <button onclick="removeFromCart(${i})" class="text-red-500"><i class="fas fa-trash-alt"></i></button>
+                </div>`;
+            }).join('');
+            const symbol = currentCurrency === 'USD' ? '$' : '﷼';
+            document.getElementById('total-price').innerText = `${(totalUSD * rates[currentCurrency]).toLocaleString()} ${symbol}`;
+        }
+
+        function checkoutWhatsApp() {
+            let total = 0;
+            let msg = "🛒 *طلب جديد من المتجر*\n\n";
+            cart.forEach(item => { msg += `• ${item.name} ($${item.price})\n`; total += item.price; });
+            msg += `\n💰 *الإجمالي:* $${total}\n🇾🇪 *باليمني:* ${(total * rates.YER_S).toLocaleString()} ريال`;
+            window.open(`https://wa.me/${MY_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
+        
+        function showPage(id) { 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.replace('text-cyan-400', 'text-gray-500'));
+            window.scrollTo(0,0);
+        }
+
+        function sendNotify(msg) {
+            const n = document.getElementById('notify');
+            document.getElementById('notify-msg').innerText = msg;
+            n.classList.remove('hidden');
+            setTimeout(() => n.classList.add('hidden'), 3000);
+        }
+
+        window.onload = () => {
+            buildSystem();
+            document.getElementById('featured-products').innerHTML = renderProducts('featured');
+            setInterval(() => { /* تايمر بسيط */ }, 1000);
+            sendNotify("أهلاً بك في متجرنا العالمي");
+        };
     </script>
 </body>
 </html>
