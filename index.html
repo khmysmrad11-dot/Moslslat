@@ -3,37 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOSLSLAT ERROR: 666</title>
+    <title>MOSLSLAT ERROR: 666 | AI BRAIN</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&family=Nosifer&family=Source+Code+Pro:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --red: #ff0000; --green: #00ff41; --blue: #0011ff; --bg: #000000; }
-        body, html { background: var(--bg); margin: 0; overflow: hidden; height: 100vh; font-family: 'Source Code Pro', monospace; cursor: crosshair; }
-
-        /* تأثير الجماجم والخلفية */
+        body, html { background: var(--bg); margin: 0; overflow: hidden; height: 100vh; font-family: 'Source Code Pro', monospace; }
         #ghost-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
-        
         .dark-overlay { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, #000 80%); pointer-events: none; }
-
-        /* شاشة الرعب */
-        .horror-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; color: var(--red); z-index: 10; position: relative; }
         
-        .skull-logo { font-family: 'Nosifer', cursive; font-size: 3.5rem; text-shadow: 0 0 20px var(--red); animation: vibrate 0.1s infinite; margin-bottom: 20px; }
+        /* شاشة الدخول المرعبة */
+        .horror-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; color: var(--red); z-index: 10; position: relative; }
+        .skull-logo { font-family: 'Nosifer', cursive; font-size: clamp(2rem, 8vw, 3.5rem); text-shadow: 0 0 20px var(--red); animation: vibrate 0.1s infinite; margin-bottom: 20px; }
         @keyframes vibrate { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } 100% { transform: translate(2px, -2px); } }
+        
+        .system-msg { color: var(--green); font-size: 1.1rem; background: rgba(0,0,0,0.8); padding: 10px; border: 1px solid var(--green); margin-bottom: 20px; font-family: 'Cairo'; }
+        input { width: 80%; max-width: 300px; background: transparent; border: 2px solid var(--red); color: #fff; padding: 15px; text-align: center; font-size: 1.2rem; outline: none; box-shadow: 0 0 15px var(--red); }
+        
+        button { margin-top: 20px; background: var(--red); color: #000; border: none; padding: 15px 40px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); transition: 0.3s; }
+        button:hover { background: var(--green); box-shadow: 0 0 30px var(--green); }
 
-        .system-msg { color: var(--green); font-size: 1.2rem; background: rgba(0,0,0,0.8); padding: 10px; border: 1px solid var(--green); margin-bottom: 20px; font-family: 'Cairo'; }
-
-        /* حقل الإدخال المرعب */
-        .input-box { position: relative; width: 300px; }
-        input { width: 100%; background: transparent; border: 2px solid var(--red); color: #fff; padding: 15px; text-align: center; font-size: 1.5rem; letter-spacing: 5px; outline: none; transition: 0.3s; box-shadow: 0 0 15px var(--red); }
-        input:focus { border-color: var(--blue); box-shadow: 0 0 30px var(--blue); color: var(--green); }
-
-        button { margin-top: 20px; background: var(--red); color: #000; border: none; padding: 15px 40px; font-weight: bold; font-family: 'Cairo'; cursor: pointer; font-size: 1.2rem; transition: 0.5s; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%); }
-        button:hover { background: var(--green); color: #000; box-shadow: 0 0 50px var(--green); transform: scale(1.1); }
-
-        /* واجهة التحكم الذكية (بعد الدخول) */
-        #main-system { display: none; padding: 20px; border: 3px solid var(--blue); margin: 20px; height: 90vh; background: rgba(0,0,10,0.9); }
-        .terminal-header { border-bottom: 2px solid var(--blue); padding: 10px; color: var(--blue); display: flex; justify-content: space-between; }
-        .ai-chat { height: 70%; overflow-y: auto; color: var(--green); padding: 20px; border: 1px inset var(--blue); margin: 10px 0; font-size: 0.9rem; }
+        /* واجهة النظام الذكي */
+        #main-system { display: none; padding: 15px; border: 3px solid var(--blue); margin: 10px; height: calc(100vh - 50px); background: rgba(0,0,10,0.95); flex-direction: column; position: relative; z-index: 20; }
+        .ai-chat { flex: 1; overflow-y: auto; color: var(--green); padding: 15px; border: 1px inset var(--blue); margin-bottom: 10px; font-size: 0.95rem; line-height: 1.6; }
+        .ai-chat b { color: var(--red); }
+        pre { background: #111; padding: 10px; border: 1px solid var(--green); overflow-x: auto; color: #fff; text-align: left; direction: ltr; font-size: 0.85rem; margin: 10px 0; }
+        
+        .input-area { display: flex; gap: 10px; }
+        #aiIn { flex: 1; border-color: var(--blue); text-align: right; letter-spacing: 0; font-family: 'Cairo'; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -43,102 +39,97 @@
 
 <div class="horror-container" id="login-zone">
     <div class="skull-logo">☠️ MOSLSLAT ☠️</div>
-    <div class="system-msg">> تم رصد روح غريبة تحاول اختراق النظام...</div>
-    <div class="input-box">
-        <input type="password" id="passKey" placeholder="KEY_666">
-    </div>
-    <button onclick="verifyAccess()">تضحية بالبيانات والدخول</button>
+    <div class="system-msg">> النظام مشفر.. أدخل مفتاح العبور (khmeas)</div>
+    <input type="password" id="passKey" placeholder="PASSWORD">
+    <button onclick="verifyAccess()">كسر التشفير والدخول</button>
 </div>
 
 <div id="main-system">
-    <div class="terminal-header">
-        <span>[ SYSTEM: INFERNO ]</span>
-        <span style="font-family: 'Nosifer';">MOSLSLAT AI</span>
-        <span id="clock">00:00:00</span>
+    <div style="color: var(--blue); font-weight: bold; display: flex; justify-content: space-between; font-size: 0.8rem;">
+        <span>[ STATUS: BRAIN_CONNECTED ]</span>
+        <span>MODEL: GEMINI_PRO_V1</span>
     </div>
+    
     <div class="ai-chat" id="chatOut">
-        <div style="color: var(--red); font-weight: bold;">[!] مرحباً بك يا مبرمج الأرواح.. أنا نسختك المصغرة والذكية جداً. أي كود تريد أن "ننتزعه" من أعماق الإنترنت اليوم؟</div>
+        <div><b>[!] النظام جاهز:</b> أنا نسختك المصغرة والذكية.. لقد تم ربط مخي بـ Gemini بنجاح. اطلب أي كود أو تطبيق وسأصممه لك فوراً.</div>
     </div>
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="aiIn" placeholder="اطلب المستحيل..." style="border-color: var(--green); color: var(--green); flex: 1; text-align: right; letter-spacing: 1px;">
-        <button onclick="generateDarkCode()" style="background: var(--blue); color: #fff; padding: 0 20px;">تنفيذ</button>
+
+    <div class="input-area">
+        <input type="text" id="aiIn" placeholder="اكتب طلبك هنا (مثلاً: كود تطبيق مراسلة)...">
+        <button onclick="askGemini()" style="margin: 0; background: var(--blue); color: #fff; padding: 0 15px;">تنفيذ</button>
     </div>
 </div>
 
 <script>
-    // رسم الجماجم والأرواح في الخلفية
-    const canvas = document.getElementById('ghost-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    function drawSkull(x, y, color) {
-        ctx.font = "30px Arial";
-        ctx.fillStyle = color;
-        ctx.fillText("💀", x, y);
-    }
-
-    let entities = [];
-    for(let i=0; i<50; i++) {
-        entities.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2, c: i%2==0 ? 'red' : 'green'});
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        entities.forEach(e => {
-            e.y -= e.s;
-            if(e.y < -50) e.y = canvas.height + 50;
-            drawSkull(e.x, e.y, e.c);
-        });
-        requestAnimationFrame(animate);
-    }
-    animate();
-
-    // التحقق من الدخول
+    // كلمة السر الأصلية
     function verifyAccess() {
-        const key = document.getElementById('passKey').value;
-        if(key === 'khmeas') {
-            document.getElementById('login-zone').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('login-zone').style.display = 'none';
-                document.getElementById('main-system').style.display = 'block';
-                document.body.style.background = "#000511";
-            }, 500);
+        if(document.getElementById('passKey').value === 'khmeas') {
+            document.getElementById('login-zone').style.display = 'none';
+            document.getElementById('main-system').style.display = 'flex';
         } else {
-            alert("خطأ! الجماجم ترفضك.");
-            document.body.style.background = "red";
-            setTimeout(() => document.body.style.background = "black", 100);
+            alert("خطأ! الجماجم ترفض دخولك.");
         }
     }
 
-    // الذكاء الاصطناعي (نسخة منك)
-    async function generateDarkCode() {
+    // وظيفة الربط الذكي الحقيقي بالـ API الخاص بك
+    async function askGemini() {
         const input = document.getElementById('aiIn');
         const out = document.getElementById('chatOut');
-        if(!input.value) return;
+        const userMsg = input.value;
+        if(!userMsg) return;
 
-        const cmd = input.value;
-        out.innerHTML += `<div style="color: #fff; margin: 10px 0;">> أنت: ${cmd}</div>`;
+        // عرض رسالة المستخدم
+        out.innerHTML += `<div style="color: #fff; margin: 15px 0; border-right: 2px solid #fff; padding-right: 10px;">> أنت: ${userMsg}</div>`;
         input.value = '';
-
-        const aiMsg = document.createElement('div');
-        aiMsg.innerHTML = `<span style="color: var(--blue);">[ANALYZING]</span> جاري استدعاء قوى البرمجة لبناء (${cmd})...`;
-        out.appendChild(aiMsg);
+        
+        const loadingMsg = document.createElement('div');
+        loadingMsg.innerHTML = `<span style="color: var(--blue);">[جاري سحب البيانات من السحابة الذكية...]</span>`;
+        out.appendChild(loadingMsg);
         out.scrollTop = out.scrollHeight;
 
-        setTimeout(() => {
-            const codeTemplate = `\n<div class='scary-app'>\n  <h1 style='color: red;'>${cmd}</h1>\n  <style>body{background:#000;}</style>\n</div>`;
-            aiMsg.innerHTML = `<span style="color: var(--green);">[SUCCESS]</span> إليك الكود الكامل والمحسن. لقد أضفت لك لمسات سرية تجعله أسرع بـ 10 أضعاف مما تطلب!
-            <pre style="background: #111; padding: 10px; border: 1px solid var(--green); overflow-x: auto;">${codeTemplate.replace(/</g, '&lt;')}</pre>
-            <div style="color: var(--blue); font-size: 0.8rem;">💡 نصيحة مني: هذا التصميم يحتاج لخلفية متحركة ليكون مذهلاً. هل تريدني أن أضيفها؟</div>`;
-            out.scrollTop = out.scrollHeight;
-        }, 2000);
+        try {
+            // مفتاحك الذي أعطيتني إياه مدمج هنا
+            const apiKey = "AIzaSyCMzl_Go-dVjZi70IctUeRx9Dej5rxIoR8"; 
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: userMsg + " (أجبني بالعربية كخبير برمجة محترف جداً، إذا طلبت كوداً أعطني إياه كاملاً وجاهزاً للنسخ داخل ```)" }] }]
+                })
+            });
+
+            const data = await response.json();
+            let aiResponse = data.candidates[0].content.parts[0].text;
+            
+            // تحويل الرد إلى شكل احترافي (نصوص + صناديق أكواد)
+            aiResponse = aiResponse.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+            aiResponse = aiResponse.replace(/\n/g, '<br>');
+
+            loadingMsg.innerHTML = `<span style="color: var(--green);">[المخ الذكي]:</span><br>${aiResponse}`;
+        } catch (e) {
+            loadingMsg.innerHTML = `<span style="color: var(--red);">[ERROR]</span> حدث خطأ في الاتصال. تأكد أن مفتاح الـ API يعمل ولم ينتهِ حده اليومي.`;
+            console.error(e);
+        }
+        out.scrollTop = out.scrollHeight;
     }
 
-    // الساعة
-    setInterval(() => {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-    }, 1000);
+    // أنيميشن الجماجم المرعبة
+    const canvas = document.getElementById('ghost-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    let skulls = [];
+    for(let i=0; i<40; i++) skulls.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*1.5 + 0.5});
+    function draw() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        ctx.font = "20px Arial";
+        skulls.forEach(s => {
+            ctx.fillStyle = Math.random() > 0.5 ? "red" : "green";
+            ctx.fillText("💀", s.x, s.y);
+            s.y -= s.s; if(s.y < -20) s.y = canvas.height + 20;
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
 </script>
 </body>
 </html>
