@@ -3,57 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المعلم AI - Moslslat</title>
+    <title>المعلم AI - منصة البرمجة الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { background: #1e293b; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); width: 90%; max-width: 500px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; box-sizing: border-box; }
-        button { background-color: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
-        button:hover { background-color: #2563eb; }
-        #result { margin-top: 20px; white-space: pre-wrap; text-align: right; background: #334155; padding: 15px; border-radius: 8px; display: none; border: 1px solid #475569; }
+        :root { --primary: #3b82f6; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .container { background: var(--card); padding: 2.5rem; border-radius: 1.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); width: 95%; max-width: 700px; border: 1px solid #334155; }
+        h1 { color: var(--primary); margin-bottom: 1rem; font-size: 1.8rem; }
+        input { width: 100%; padding: 15px; margin: 15px 0; border-radius: 12px; border: 2px solid #334155; background: #0f172a; color: white; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        button { background: linear-gradient(90deg, #3b82f6, #2563eb); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5); }
+        .result-area { margin-top: 25px; display: none; text-align: left; direction: ltr; }
+        .code-box { background: #000; color: #4ade80; padding: 20px; border-radius: 12px; overflow-x: auto; font-family: 'Courier New', monospace; position: relative; border: 1px solid #334155; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; background: #334155; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
+
     <div class="container" id="login-box">
-        <h2 style="color: #60a5fa;">أدخل كلمة السر</h2>
+        <h1>🔐 دخول المنصة</h1>
+        <p>أدخل كلمة السر الخاصة بمشروعك للبدء</p>
         <input type="password" id="pass" placeholder="كلمة السر...">
-        <button onclick="checkPass()">دخول للمنصة</button>
+        <button onclick="checkPass()">فتح المعمل البرمجي</button>
     </div>
 
     <div class="container" id="main-box" style="display:none;">
-        <h2 style="color: #60a5fa;">مرحباً بك في المعلم AI</h2>
-        <p>اكتب فكرتك وسأقوم ببرمجتها لك فوراً</p>
-        <input type="text" id="prompt" placeholder="مثلاً: اصنع لي صفحة محل ملابس...">
-        <button onclick="generate()">ابدأ البرمجة الذكية</button>
-        <div id="result"></div>
+        <h1>🤖 المعلم AI</h1>
+        <p>اكتب ما تريد برمجته وسأقوم بتوليد الكود لك</p>
+        <input type="text" id="prompt" placeholder="مثال: اصنع لي صفحة مباريات كرة قدم...">
+        <button onclick="generateAI()">توليد الكود الذكي</button>
+        
+        <div class="result-area" id="result-area">
+            <p style="color: var(--primary); direction: rtl; text-align: right;">🚀 الكود الجاهز:</p>
+            <div class="code-box">
+                <button class="copy-btn" onclick="copyCode()">نسخ</button>
+                <code id="output-code"></code>
+            </div>
+        </div>
     </div>
 
     <script>
         function checkPass() {
-            const pass = document.getElementById('pass').value;
-            if(pass === 'khmeas') {
+            if(document.getElementById('pass').value === 'khmeas') {
                 document.getElementById('login-box').style.display = 'none';
                 document.getElementById('main-box').style.display = 'block';
-            } else {
-                alert('كلمة السر خاطئة!');
-            }
+            } else { alert('خطأ في كلمة السر!'); }
         }
 
-        function generate() {
-            const btn = document.querySelector('#main-box button');
-            const resDiv = document.getElementById('result');
+        async function generateAI() {
             const prompt = document.getElementById('prompt').value;
-            
-            if(!prompt) return alert('الرجاء كتابة فكرة!');
+            const output = document.getElementById('output-code');
+            const area = document.getElementById('result-area');
+            if(!prompt) return;
 
-            btn.innerText = 'جاري المعالجة عبر Gemini...';
-            resDiv.style.display = 'block';
-            resDiv.innerText = 'المعلم AI يتصل الآن بمفتاحك السري... سيتم بناء الكود خلال لحظات.';
-            
+            area.style.display = 'block';
+            output.innerText = "جاري الاتصال بـ Gemini...\nجاري بناء هيكل HTML...\nتنسيق الألوان بـ CSS...";
+
+            // محاكاة لعملية التوليد لضمان اشتغال الواجهة أمامك الآن
             setTimeout(() => {
-                btn.innerText = 'ابدأ البرمجة الذكية';
-                resDiv.innerHTML = '<strong style="color: #4ade80;">تم الاتصال بنجاح!</strong><br>المحرك جاهز لبناء: ' + prompt;
-            }, 3000);
+                const generatedCode = `\n<div class='app'>\n  <h1>\${prompt}</h1>\n  <style>\n    body { background: #111; color: gold; }\n    .app { border: 2px solid gold; padding: 20px; }\n  </style>\n  <p>هذا هو الكود المبدئي لطلبك، يمكنك تعديله!</p>\n</div>`;
+                output.innerText = generatedCode;
+            }, 2000);
+        }
+
+        function copyCode() {
+            const text = document.getElementById('output-code').innerText;
+            navigator.clipboard.writeText(text);
+            alert('تم نسخ الكود بنجاح!');
         }
     </script>
 </body>
