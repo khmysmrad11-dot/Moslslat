@@ -1,0 +1,12 @@
+{
+  "name": "mualim-ai-core",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.2.0",
+    "framer-motion": "^11.0.0",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  }
+}
